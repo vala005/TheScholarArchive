@@ -1,0 +1,15 @@
+{
+  "system": "Research Platform",
+  "actors": [
+    {"name": "User", "side": "left"},
+    {"name": "Researcher", "side": "right"},
+    {"name": "Admin", "side": "right"}
+  ],
+  "use_cases": [
+    {"name": "Search Publications", "actors": ["User"]},
+    {"name": "View Full Publication", "actors": ["User"], "includes": ["Log In"]},
+    {"name": "Log In"},
+    {"name": "Upload Paper", "actors": ["Researcher"], "includes": ["Log In"]},
+    {"name": "Review Paper", "actors": ["Admin"], "includes": ["Log In"]}
+  ]
+}

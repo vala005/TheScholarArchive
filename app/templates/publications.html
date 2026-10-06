@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Browse Publications | The Scholar's Archive{% endblock %}
+
+{% block content %}
+<div class="archive-page">
+  <header class="archive-nav">
+    <a class="brand-wordmark" href="{{ url_for('index_view') }}">The Scholar's Archive</a>
+    <nav class="archive-nav-actions" aria-label="Account">
+      {% if user_logged_in %}
+      <a class="btn-landing btn-landing-ghost" href="{{ url_for('logout') }}">Sign out</a>
+      {% else %}
+      <a class="btn-landing btn-landing-ghost" href="{{ url_for('login_view') }}">Sign in</a>
+      <a class="btn-landing btn-landing-primary" href="{{ url_for('register_view') }}">Create an account</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="archive-main">
+    <p class="landing-kicker">The catalogue</p>
+    <h1 class="archive-title">Browse Publications</h1>
+    <p class="archive-intro">Explore approved research from the archive.</p>
+
+    <form class="archive-search" method="get" action="{{ url_for('publications_view') }}" role="search">
+      <label class="visually-hidden" for="publication-query">Search by title or abstract</label>
+      <input id="publication-query" name="q" type="search" value="{{ query }}" placeholder="Title or abstract">
+      <button class="btn-landing btn-landing-primary" type="submit">Search</button>
+    </form>
+
+    {% if publications %}
+    <p class="archive-count">{{ publications|length }} approved publication{% if publications|length != 1 %}s{% endif %}</p>
+    <section class="publication-list" aria-label="Approved publications">
+      {% for publication in publications %}
+      <article class="publication-row">
+        <p class="publication-meta">ARCHIVE NO. {{ "%04d"|format(publication.id) }} <span>APPROVED</span></p>
+        <h2>{{ publication.title }}</h2>
+        <p class="publication-abstract">{{ publication.abstract|truncate(260, True, "…") }}</p>
+        {% if user_logged_in %}
+        <a class="publication-access" href="{{ url_for('publication_detail_view', pub_id=publication.id) }}">Read full paper <span aria-hidden="true">→</span></a>
+        {% else %}
+        <a class="publication-access" href="{{ url_for('login_view') }}">Sign in to access full paper <span aria-hidden="true">→</span></a>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </section>
+    {% else %}
+    <div class="archive-empty" role="status">
+      <h2>No approved publications found</h2>
+      <p>Try another search term, or return to the catalogue later.</p>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

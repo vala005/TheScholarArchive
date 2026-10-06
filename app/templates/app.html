@@ -2,8 +2,66 @@
 {% block title %}Home{% endblock %}
 
 {% block subpage_content %}
-<div class="container-fluid py-2">
-  <h1 class="h4 mb-2">Home</h1>
-  <p class="text-muted mb-0">Workflow screens replace this shell in Phase 5 implement.</p>
+<div class="admin-review-page researcher-submissions">
+  <header class="review-page-heading">
+    <p class="archive-eyebrow">THE SCHOLAR'S ARCHIVE / RESEARCHER DESK</p>
+    <h1>Your submissions</h1>
+    <p>Track the papers you have submitted for review.</p>
+  </header>
+
+  <section class="upload-panel" aria-label="Submit paper for review">
+    <h2>Submit a paper for review</h2>
+    <form method="post" action="{{ url_for('submit_publication_action') }}" enctype="multipart/form-data">
+      <div class="form-row">
+        <label for="paper-title">Title</label>
+        <input id="paper-title" name="title" type="text" required>
+      </div>
+      <div class="form-row">
+        <label for="paper-abstract">Abstract</label>
+        <textarea id="paper-abstract" name="abstract" rows="4" required></textarea>
+      </div>
+      <div class="form-row two-col">
+        <div>
+          <label for="paper-doi">DOI</label>
+          <input id="paper-doi" name="doi" type="text">
+        </div>
+        <div>
+          <label for="paper-year">Year</label>
+          <input id="paper-year" name="year" type="number" min="1900" max="2100">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="paper-keywords">Keywords</label>
+        <input id="paper-keywords" name="keywords" type="text" placeholder="history, community, archives">
+      </div>
+      <div class="form-row">
+        <label for="paper-file">PDF file</label>
+        <input id="paper-file" name="file" type="file" accept="application/pdf" required>
+      </div>
+      <button class="btn-landing btn-landing-primary" type="submit">Submit for review</button>
+    </form>
+  </section>
+
+  {% if papers %}
+  <section class="review-queue" aria-label="Your submitted papers">
+    {% for paper in papers %}
+    <article class="review-queue-row">
+      <div>
+        <p class="publication-meta">SUBMISSION {{ "%04d"|format(paper.id) }} <span>{{ paper.status|upper }}</span></p>
+        <h2>{{ paper.title }}</h2>
+        <p>{{ paper.abstract|truncate(220, True, "…") }}</p>
+      </div>
+      {% if paper.status == "approved" %}
+      <a class="publication-access" href="{{ url_for('publication_detail_view', pub_id=paper.id) }}">View paper</a>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <div class="archive-empty" role="status">
+    <h2>No submissions yet</h2>
+    <p>Your uploaded papers will appear here.</p>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

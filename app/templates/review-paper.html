@@ -1,0 +1,30 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Review Paper | The Scholar's Archive{% endblock %}
+
+{% block subpage_content %}
+<main class="admin-review-page">
+  <a class="auth-back" href="{{ url_for('admin_home_view') }}">← Review queue</a>
+  <header class="review-page-heading">
+    <p class="archive-eyebrow">PAPER REVIEW / SUBMISSION {{ "%04d"|format(paper.id) }}</p>
+    <h1>{{ paper.title }}</h1>
+    <p class="review-paper-meta">{{ paper.year or "Year not supplied" }} · {{ paper.doi or "DOI not supplied" }}</p>
+  </header>
+
+  <section class="review-paper-copy" aria-label="Paper abstract">
+    <h2>Abstract</h2>
+    <p>{{ paper.abstract }}</p>
+  </section>
+
+  <nav class="review-paper-links" aria-label="Paper references">
+    <a href="#citations">Citations</a>
+    <a href="#references">References</a>
+  </nav>
+
+  <section class="review-paper-actions" aria-label="Review decision">
+    <form method="post" action="{{ url_for('review_decision_action', pub_id=paper.id) }}">
+      <button class="decision-button decision-deny" type="submit" name="decision" value="reject">Deny</button>
+      <button class="decision-button decision-approve" type="submit" name="decision" value="approve">Approve</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

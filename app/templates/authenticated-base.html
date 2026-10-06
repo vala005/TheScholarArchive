@@ -4,7 +4,7 @@
 <style>
     body {
         overflow-x: hidden;
-        background: #f4f6f8;
+        background: var(--brand-bg);
     }
 
     #wrapper {
@@ -18,7 +18,8 @@
         min-height: 100vh;
         transition: all 0.3s;
         background: var(--brand-sidebar);
-        color: #fff;
+        color: var(--brand-ink);
+        border-right: 1px solid rgba(201, 169, 110, 0.32);
     }
 
     #sidebar.collapsed {
@@ -32,13 +33,13 @@
 
     #sidebar .nav-link:hover,
     #sidebar .nav-link.active {
-        color: #fff;
-        background-color: color-mix(in srgb, var(--brand-accent) 55%, #000);
-        border-radius: 0.5rem;
+        color: var(--brand-ink);
+        background-color: color-mix(in srgb, var(--brand-accent) 60%, var(--brand-sidebar));
+        border-radius: var(--brand-radius);
     }
 
     #sidebar .brand-wordmark {
-        color: #fff;
+        color: var(--brand-ink);
         font-size: 1.25rem;
         text-align: center;
         margin: 1rem 0 1.5rem;
@@ -50,11 +51,24 @@
         transition: all 0.3s;
         display: flex;
         flex-direction: column;
-        background-color: #f4f6f8;
+        background-color: var(--brand-bg);
     }
 
-    .navbar {
-        border-bottom: 1px solid #dee2e6;
+    .archive-topbar {
+        background: var(--brand-surface);
+        color: var(--brand-ink);
+        border: 1px solid rgba(201, 169, 110, 0.32);
+        border-radius: var(--brand-radius);
+    }
+
+    #menu-toggle {
+        color: var(--brand-gold);
+        border-color: rgba(201, 169, 110, 0.5);
+    }
+
+    #menu-toggle:hover {
+        color: var(--brand-ink);
+        background: var(--brand-accent);
     }
 </style>
 {% block additional_styles %}{% endblock %}
@@ -63,7 +77,7 @@
 {% block content %}
 <div id="wrapper">
     <nav id="sidebar" class="p-3 d-flex flex-column vh-100">
-        <div class="brand-wordmark">FastStarter</div>
+        <div class="brand-wordmark">The Scholar's Archive</div>
 
         <ul class="nav nav-pills flex-column gap-2 flex-grow-1">
             <li class="nav-item">
@@ -83,8 +97,8 @@
     </nav>
 
     <div id="content">
-        <nav class="navbar navbar-expand-lg bg-white mb-4 px-3 rounded-3 shadow-sm">
-            <button class="btn btn-outline-secondary" id="menu-toggle" type="button">
+        <nav class="navbar navbar-expand-lg archive-topbar mb-4 px-3 py-2">
+            <button class="btn" id="menu-toggle" type="button" aria-label="Toggle navigation">
                 <span class="material-symbols-outlined md-dark">menu</span>
             </button>
             <div class="ms-auto d-flex align-items-center gap-3">

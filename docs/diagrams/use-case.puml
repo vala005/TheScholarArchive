@@ -1,0 +1,34 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam actorBorderColor #1B365D
+skinparam actorFontColor #1E232D
+skinparam usecaseBackgroundColor #FFFFFF
+skinparam usecaseBorderColor #1B365D
+skinparam usecaseFontColor #1E232D
+skinparam rectangleBorderColor #1B365D
+skinparam rectangleBackgroundColor #F8FAFC
+skinparam arrowColor #1B365D
+
+actor "User" as User
+
+rectangle "Research Platform" {
+  usecase "Search Publications" as Search_Publications
+  usecase "View Full Publication" as View_Full_Publication
+  usecase "Log In" as Log_In
+  usecase "Upload Paper" as Upload_Paper
+  usecase "Review Paper" as Review_Paper
+}
+
+actor "Researcher" as Researcher
+actor "Admin" as Admin
+
+User --> Search_Publications
+User --> View_Full_Publication
+View_Full_Publication ..> Log_In : <<include>>
+Upload_Paper <-- Researcher
+Upload_Paper ..> Log_In : <<include>>
+Review_Paper <-- Admin
+Review_Paper ..> Log_In : <<include>>
+
+@enduml

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ paper.title }} | The Scholar's Archive{% endblock %}
+
+{% block content %}
+<div class="archive-page">
+  <header class="archive-nav">
+    <a class="brand-wordmark" href="{{ url_for('index_view') }}">The Scholar's Archive</a>
+    <nav class="archive-nav-actions" aria-label="Account">
+      <a class="btn-landing btn-landing-ghost" href="{{ url_for('logout') }}">Sign out</a>
+    </nav>
+  </header>
+
+  <main class="archive-main publication-detail">
+    <a class="auth-back" href="{{ url_for('publications_view') }}">← Browse publications</a>
+    <p class="publication-meta">ARCHIVE NO. {{ "%04d"|format(paper.id) }} <span>{{ paper.status|upper }}</span></p>
+    <h1 class="archive-title">{{ paper.title }}</h1>
+    <p class="publication-detail-meta">{{ paper.year or "Year not supplied" }} · {{ paper.doi or "DOI not supplied" }}</p>
+    <section class="publication-full-article" aria-label="Full article PDF">
+      {% if paper.pdf_path %}
+      <iframe src="{{ url_for('publication_pdf_view', pub_id=paper.id) }}" title="Full article: {{ paper.title }}"></iframe>
+      {% else %}
+      <p class="archive-empty">The PDF has not been uploaded yet.</p>
+      {% endif %}
+    </section>
+
+    <section class="publication-links-section" aria-labelledby="references-heading">
+      <h2 id="references-heading">References</h2>
+      {% if references %}
+      <ul>
+        {% for reference in references %}
+        <li><a href="{{ url_for('publication_detail_view', pub_id=reference.id) }}">{{ reference.title }}</a></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No references listed.</p>
+      {% endif %}
+    </section>
+
+    <section class="publication-links-section" aria-labelledby="citations-heading">
+      <h2 id="citations-heading">Cited by</h2>
+      {% if citations %}
+      <ul>
+        {% for citation in citations %}
+        <li><a href="{{ url_for('publication_detail_view', pub_id=citation.id) }}">{{ citation.title }}</a></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No citations listed.</p>
+      {% endif %}
+    </section>
+  </main>
+</div>
+{% endblock %}

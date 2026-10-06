@@ -2,8 +2,35 @@
 {% block title %}Admin{% endblock %}
 
 {% block subpage_content %}
-<div class="container-fluid py-2">
-  <h1 class="h4 mb-2">Admin</h1>
-  <p class="text-muted mb-0">Admin workflow screens replace this shell in Phase 5 implement.</p>
+<div class="admin-review-page">
+  <header class="review-page-heading">
+    <p class="archive-eyebrow">THE SCHOLAR'S ARCHIVE / EDITORIAL DESK</p>
+    <h1>Review queue</h1>
+    <p>Submissions waiting for an editorial decision.</p>
+  </header>
+
+  {% if complete %}
+  <p class="review-notice" role="status">Decision recorded.</p>
+  {% endif %}
+
+  {% if papers %}
+  <section class="review-queue" aria-label="Papers awaiting review">
+    {% for paper in papers %}
+    <article class="review-queue-row">
+      <div>
+        <p class="publication-meta">SUBMISSION {{ "%04d"|format(paper.id) }} <span>UNDER REVIEW</span></p>
+        <h2>{{ paper.title }}</h2>
+        <p>{{ paper.abstract|truncate(220, True, "…") }}</p>
+      </div>
+      <a class="btn-landing btn-landing-ghost" href="{{ url_for('review_paper_view', pub_id=paper.id) }}">Review paper</a>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <div class="archive-empty">
+    <h2>No papers awaiting review</h2>
+    <p>New submissions will appear here.</p>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

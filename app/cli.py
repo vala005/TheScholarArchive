@@ -19,7 +19,7 @@ from pathlib import Path
 
 
 def _ensure_models_loaded() -> None:
-    import app.models  # noqa: F401
+    import app.models.research # noqa: F401
 
 
 def cmd_init(args: argparse.Namespace) -> None:
@@ -47,47 +47,159 @@ def cmd_init(args: argparse.Namespace) -> None:
 
 
 def cmd_seed(args: argparse.Namespace) -> None:
-    """Insert demo users.
+    """Insert demo accounts and research catalogue data.
 
     bob / bobpass       (regular_user)
     admin / adminpass   (admin)
+    researcher01-10 / researchpass
+    publisher01-11 / publisherpass; admin is also a publisher
     """
     from app.database import ensure_db_and_tables, get_cli_session
+    from app.models.research import Admin, Citation, Publication, Researcher
+    from app.models.user import User
     from app.repositories.user import UserRepository
     from app.schemas.user import AdminCreate, RegularUserCreate
     from app.utilities.security import encrypt_password
+    from sqlmodel import select
 
     _ensure_models_loaded()
     ensure_db_and_tables()
 
-    demo_users = [
-        ("bob", "bob@example.com", "bobpass", "regular_user"),
-        ("admin", "admin@example.com", "adminpass", "admin"),
-    ]
-
-    created = 0
-    skipped = 0
     with get_cli_session() as session:
         repo = UserRepository(session)
-        for username, email, password, role in demo_users:
-            if repo.get_by_username(username):
-                print(f"  skip  {username} (already exists)")
-                skipped += 1
-                continue
+
+        def ensure_user(username: str, password: str, role: str) -> User:
+            user = repo.get_by_username(username)
+            if user is not None:
+                return user
             payload_cls = AdminCreate if role == "admin" else RegularUserCreate
-            repo.create(
+            return repo.create(
                 payload_cls(
                     username=username,
-                    email=email,
+                    email=f"{username}@example.com",
                     password=encrypt_password(password),
                     role=role,
                 )
             )
-            print(f"  create {username} ({role})")
-            created += 1
 
-    print(f"Seed done — created {created}, skipped {skipped}.")
-    print("Login with bob/bobpass or admin/adminpass")
+        ensure_user("bob", "bobpass", "regular_user")
+
+        researchers = []
+        for index in range(1, 11):
+            username = f"researcher{index:02d}"
+            user = ensure_user(username, "researchpass", "researcher")
+            researcher = session.exec(
+                select(Researcher).where(Researcher.user_id == user.id)
+            ).one_or_none()
+            if researcher is None:
+                researcher = Researcher(
+                    user_id=user.id,
+                    first_name=f"Researcher{index}",
+                    last_name="Scholar",
+                    affiliation=f"Institute {index:02d}",
+                    bio=f"Researcher {index:02d} in the archive demo collection.",
+                )
+                session.add(researcher)
+                session.flush()
+            researchers.append(researcher)
+
+        publishers = []
+        for index in range(12):
+            username = "admin" if index == 0 else f"publisher{index:02d}"
+            password = "adminpass" if index == 0 else "publisherpass"
+            user = ensure_user(username, password, "admin")
+            publisher = session.exec(
+                select(Admin).where(Admin.user_id == user.id)
+            ).one_or_none()
+            if publisher is None:
+                publisher = Admin(user_id=user.id)
+                session.add(publisher)
+                session.flush()
+            publishers.append(publisher)
+
+        subjects = [
+            "machine learning in education",
+            "climate resilience in coastal cities",
+            "open access publishing",
+            "digital archives and preservation",
+            "public health data ethics",
+            "renewable energy adoption",
+            "language models in scholarly research",
+            "student housing policy",
+            "biodiversity monitoring",
+            "community-led historical research",
+        ]
+        title_forms = (
+            "New Evidence on {subject}",
+            "Methods for Studying {subject}",
+            "A Comparative Review of {subject}",
+        )
+
+        publications_by_doi = {
+            publication.doi: publication
+            for publication in session.exec(select(Publication)).all()
+        }
+        for index in range(30):
+            subject = subjects[index % len(subjects)]
+            title = title_forms[index // len(subjects)].format(subject=subject.title())
+            doi = f"10.3613/scholars-archive.2026.{index + 1:03d}"
+            if doi in publications_by_doi:
+                continue
+            publication = Publication(
+                title=title,
+                abstract=(
+                    f"This study examines {subject} through a structured review of current "
+                    "evidence, research methods, and implications for future scholarship."
+                ),
+                status="approved" if index < 20 else "under review",
+                researcher_id=researchers[index % len(researchers)].id,
+                doi=doi,
+                keywords=[subject, "scholarly research"],
+                year=2019 + index % 8,
+                publisher_id=publishers[index % len(publishers)].id,
+            )
+            session.add(publication)
+            session.flush()
+            publications_by_doi[doi] = publication
+
+        session.commit()
+
+        seeded_publications = [
+            publications_by_doi[f"10.3613/scholars-archive.2026.{index + 1:03d}"]
+            for index in range(30)
+        ]
+        existing_citations = {
+            (citation.citing_pub_id, citation.cited_pub_id)
+            for citation in session.exec(select(Citation)).all()
+        }
+        for index, publication in enumerate(seeded_publications):
+            for offset in range(1, 6):
+                cited_publication = seeded_publications[(index + offset) % len(seeded_publications)]
+                pair = (publication.id, cited_publication.id)
+                if pair not in existing_citations:
+                    session.add(
+                        Citation(
+                            citing_pub_id=pair[0],
+                            cited_pub_id=pair[1],
+                        )
+                    )
+                    existing_citations.add(pair)
+        session.commit()
+
+        approved_count = sum(
+            publication.status == "approved" for publication in seeded_publications
+        )
+        under_review_count = sum(
+            publication.status == "under review" for publication in seeded_publications
+        )
+        print(
+            "Seeded 10 researchers, 12 admin publishers, 30 publications "
+            f"({approved_count} approved, {under_review_count} under review), "
+            f"and {len(existing_citations)} citations."
+        )
+        print("Researcher login: researcher01-researcher10 / researchpass")
+        print("Publisher logins: admin/adminpass; publisher01-publisher11 / publisherpass")
+        print("Regular user login: bob/bobpass")
 
 
 def cmd_run(args: argparse.Namespace) -> None:
