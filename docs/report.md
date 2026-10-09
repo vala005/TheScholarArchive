@@ -143,9 +143,9 @@ One named workflow at a time. Include verify notes and polish / model revisions 
 
 ## Deployed app
 
-Phase 6. Local functional preview while the Render deployment is not yet authenticated. Replace with the public HTTPS Render URL once the app is live.
+Phase 6. Deployed to Render. The public landing page loads and `GET /health` returns `{"ok":true}`.
 
-http://127.0.0.1:5000
+https://thescholararchive.onrender.com/
 
 ## Logins
 
