@@ -1972,8 +1972,8 @@ body {
   inset: 0 0 auto;
   height: min(54rem, 82vh);
   background:
-    linear-gradient(90deg, rgba(12, 6, 11, 0.94), rgba(49, 7, 22, 0.79) 54%, rgba(16, 8, 13, 0.62)),
-    linear-gradient(0deg, var(--brand-bg), transparent 46%),
+    linear-gradient(90deg, rgba(12, 6, 11, 0.82), rgba(49, 7, 22, 0.7) 54%, rgba(16, 8, 13, 0.76)),
+    linear-gradient(0deg, var(--brand-bg), transparent 68%),
     url("/static/img/archive-library.jpg") center 43% / cover no-repeat;
   content: "";
   pointer-events: none;
@@ -1985,18 +1985,19 @@ body {
 }
 
 .landing-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.95fr);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: clamp(2rem, 6vw, 6rem);
+  justify-content: center;
   width: min(100% - 3rem, 80rem);
   min-height: min(49rem, calc(100svh - 4.5rem));
   padding: clamp(4rem, 8vw, 7rem) 0 clamp(5rem, 9vw, 8rem);
-  text-align: left;
+  text-align: center;
 }
 
 .landing-hero-copy {
-  max-width: 43rem;
+  width: min(100%, 58rem);
+  margin-inline: auto;
 }
 
 .landing-kicker {
@@ -2014,12 +2015,13 @@ body {
 }
 
 .landing-hero .landing-kicker {
+  justify-content: center;
   margin-bottom: 1.4rem;
 }
 
 .landing-hero .brand-wordmark {
-  max-width: 11ch;
-  margin: 0 0 1.4rem;
+  max-width: 13ch;
+  margin: 0 auto 1.4rem;
   font-size: clamp(3.8rem, 8.2vw, 7rem);
   line-height: 0.87;
   letter-spacing: -0.035em;
@@ -2033,8 +2035,8 @@ body {
 }
 
 .landing-lead {
-  max-width: 34rem;
-  margin: 0 0 2rem;
+  max-width: 38rem;
+  margin: 0 auto 2rem;
   color: #e2d4cf;
   font-size: clamp(1rem, 1.6vw, 1.15rem);
   line-height: 1.8;
@@ -2042,7 +2044,9 @@ body {
 
 .landing-search {
   align-items: center;
-  width: min(100%, 42rem);
+  width: min(100%, 44rem);
+  margin-right: auto;
+  margin-left: auto;
   padding: 0.45rem 0.5rem 0.45rem 1rem;
   border-color: rgba(225, 194, 148, 0.36);
   border-radius: 8px;
@@ -2065,6 +2069,7 @@ body {
 }
 
 .landing-cta {
+  justify-content: center;
   gap: 1.5rem;
   margin-top: 1.45rem;
 }
@@ -2082,129 +2087,6 @@ body {
 .landing-text-link:hover {
   gap: 0.7rem;
   color: #e2b875;
-}
-
-.landing-hero-art {
-  position: relative;
-  display: grid;
-  min-height: 27rem;
-  place-items: center;
-  isolation: isolate;
-}
-
-.archive-cover-stack {
-  position: relative;
-  width: clamp(15rem, 27vw, 22rem);
-  aspect-ratio: 0.72;
-  transform: rotate(5deg);
-  filter: drop-shadow(0 35px 42px rgba(0, 0, 0, 0.48));
-}
-
-.archive-cover {
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(219, 181, 122, 0.58);
-  border-radius: 3px 8px 8px 3px;
-}
-
-.archive-cover-back {
-  inset: 1.2rem -1.1rem -0.8rem 1.1rem;
-  transform: rotate(-5deg);
-  background:
-    linear-gradient(145deg, rgba(150, 26, 50, 0.6), rgba(24, 11, 18, 0.96)),
-    url("/static/img/archive-library.jpg") 72% center / cover;
-  box-shadow: inset 7px 0 0 rgba(8, 5, 8, 0.22);
-}
-
-.archive-cover-front {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: clamp(1.5rem, 4vw, 2.6rem);
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 82% 17%, rgba(217, 174, 113, 0.2), transparent 26%),
-    linear-gradient(145deg, rgba(99, 11, 31, 0.97), rgba(24, 12, 19, 0.97) 72%);
-  box-shadow: inset 9px 0 0 rgba(9, 5, 9, 0.26), inset 12px 0 0 rgba(223, 185, 121, 0.08);
-}
-
-.archive-cover-front::after {
-  position: absolute;
-  inset: 0.75rem;
-  border: 1px solid rgba(223, 185, 121, 0.2);
-  content: "";
-  pointer-events: none;
-}
-
-.archive-cover-mark {
-  color: #f3dfbc;
-  font-family: var(--brand-font-display);
-  font-size: clamp(4.5rem, 10vw, 7rem);
-  line-height: 1;
-}
-
-.archive-cover-mark span {
-  color: #dba65f;
-  font-style: italic;
-}
-
-.archive-cover-rule {
-  width: 3.5rem;
-  height: 1px;
-  margin: 1.5rem 0;
-  background: #d6ae72;
-}
-
-.archive-cover-caption {
-  color: #f4e8d7;
-  font-size: 0.9rem;
-  letter-spacing: 0.18em;
-  line-height: 1.7;
-}
-
-.archive-cover-index {
-  margin-top: auto;
-  color: #d9b887;
-  font-size: 0.58rem;
-  letter-spacing: 0.16em;
-}
-
-.archive-orbit {
-  position: absolute;
-  z-index: -1;
-  width: clamp(20rem, 40vw, 33rem);
-  aspect-ratio: 1;
-  border: 1px solid rgba(218, 181, 124, 0.16);
-  border-radius: 50%;
-}
-
-.archive-orbit-one {
-  transform: scaleX(0.72) rotate(38deg);
-}
-
-.archive-orbit-two {
-  transform: scaleX(0.72) rotate(-38deg);
-}
-
-.landing-art-caption {
-  position: absolute;
-  right: 0;
-  bottom: 0.2rem;
-  display: flex;
-  gap: 0.8rem;
-  color: #e4d3c2;
-  font-family: var(--brand-font-display);
-  font-size: 1.1rem;
-  font-style: italic;
-}
-
-.landing-art-caption span {
-  color: #dcb578;
-  font-family: var(--brand-font-body);
-  font-size: 0.65rem;
-  font-style: normal;
-  letter-spacing: 0.12em;
 }
 
 .landing-scroll-cue {
@@ -2550,22 +2432,9 @@ body {
 
 @media (max-width: 760px) {
   .landing-hero {
-    grid-template-columns: 1fr;
     min-height: 0;
-    gap: 1rem;
+    gap: 2rem;
     padding: 4.5rem 0 5rem;
-  }
-
-  .landing-hero-art {
-    min-height: 21rem;
-  }
-
-  .archive-cover-stack {
-    width: min(56vw, 17rem);
-  }
-
-  .archive-cover-mark {
-    font-size: 4.5rem;
   }
 
   .landing-manifesto {
@@ -2652,16 +2521,6 @@ body {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.9rem;
-  }
-
-  .landing-hero-art {
-    min-height: 19rem;
-  }
-
-  .landing-art-caption {
-    right: 0.5rem;
-    bottom: 0;
-    font-size: 0.9rem;
   }
 
   .landing-manifesto,

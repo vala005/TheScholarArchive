@@ -7,6 +7,7 @@
     <a class="auth-back" href="{{ url_for('publications_view') }}">← Browse publications</a>
     <p class="publication-meta">ARCHIVE NO. {{ "%04d"|format(paper.id) }} <span>{{ paper.status|upper }}</span></p>
     <h1 class="archive-title">{{ paper.title }}</h1>
+    <p class="publication-authors"><strong>Authors:</strong> {{ paper.authors|join(", ") }}</p>
     <p class="publication-detail-meta">{{ paper.year or "Year not supplied" }} · {{ paper.doi or "DOI not supplied" }}</p>
     {% if user.role == "regular_user" %}
     <form class="save-publication-form" method="post" action="{{ url_for('toggle_saved_publication_action', pub_id=paper.id) }}">

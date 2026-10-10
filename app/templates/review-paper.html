@@ -7,6 +7,7 @@
   <header class="review-page-heading">
     <p class="archive-eyebrow">PAPER REVIEW / SUBMISSION {{ "%04d"|format(paper.id) }}</p>
     <h1>{{ paper.title }}</h1>
+    <p><strong>Authors:</strong> {{ paper.authors|join(", ") }}</p>
     <p class="review-paper-meta">{{ paper.year or "Year not supplied" }} · {{ paper.doi or "DOI not supplied" }}</p>
   </header>
 

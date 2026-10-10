@@ -83,8 +83,6 @@ async def toggle_saved_publication_action(
     user: ReaderDep,
     db: SessionDep,
 ):
-    # STUDENT SNIPPET: bind the user and paper to the service action, then
-    # redirect back to this paper's detail page.
     repository = PublicationRepository(db)
     service = PublicationService(repository)
 

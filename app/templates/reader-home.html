@@ -42,6 +42,7 @@
         <div>
           <p class="publication-meta">ARCHIVE NO. {{ "%04d"|format(paper.id) }} <span>APPROVED</span></p>
           <h3>{{ paper.title }}</h3>
+          <p class="publication-authors"><strong>Authors:</strong> {{ paper.authors|join(", ") }}</p>
           <p>{{ paper.abstract|truncate(180, True, "…") }}</p>
         </div>
         <a class="publication-access" href="{{ url_for('publication_detail_view', pub_id=paper.id) }}">Read paper <span aria-hidden="true">→</span></a>

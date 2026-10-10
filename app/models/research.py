@@ -33,6 +33,7 @@ class Publication(SQLModel, table=True):
     researcher_id: int = Field(foreign_key="researcher.id", index=True)
     doi: Optional[str] = Field(default=None, unique=True)
     keywords: list[str] = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
+    authors: list[str] = Field(sa_column=Column(JSON, nullable=False))
     year: Optional[int] = None
     publisher_id: Optional[int] = Field(default=None, foreign_key="admin.id", index=True)
     # STUDENT SNIPPET: add an optional field for the stored PDF path here.

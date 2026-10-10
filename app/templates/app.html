@@ -21,6 +21,10 @@
         <label for="paper-abstract">Abstract</label>
         <textarea id="paper-abstract" name="abstract" rows="4" required></textarea>
       </div>
+      <div class="form-row">
+        <label for="paper-authors">Author names</label>
+        <textarea id="paper-authors" name="authors" rows="2" placeholder="Enter one author name per line" required></textarea>
+      </div>
       <div class="form-row two-col">
         <div>
           <label for="paper-doi">DOI</label>
@@ -51,7 +55,12 @@
       <div>
         <p class="publication-meta">SUBMISSION {{ "%04d"|format(paper.id) }} <span>{{ paper.status|upper }}</span></p>
         <h2>{{ paper.title }}</h2>
+        <p><strong>Authors:</strong> {{ paper.authors|join(", ") }}</p>
         <p>{{ paper.abstract|truncate(220, True, "…") }}</p>
+        {% if paper.status == "rejected" and paper.reviews %}
+        {% set latest_review = paper.reviews[-1] %}
+        <p><strong>Reviewed by:</strong> {{ latest_review.reviewer.user.name or latest_review.reviewer.user.username }}</p>
+        {% endif %}
       </div>
       {% if paper.status == "approved" %}
       <a class="publication-access" href="{{ url_for('publication_detail_view', pub_id=paper.id) }}">View paper</a>

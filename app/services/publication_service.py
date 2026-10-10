@@ -1,12 +1,29 @@
 from typing import Optional
 
-from app.models.research import Publication
+from app.models.research import Publication, Researcher
 from app.repositories.publication import PublicationRepository
 
 
 class PublicationService:
     def __init__(self, publication_repo: PublicationRepository):
         self.publication_repo = publication_repo
+
+    def get_or_create_researcher(
+        self,
+        *,
+        user_id: int,
+        username: str,
+    ) -> Researcher:
+        return self.publication_repo.get_or_create_researcher(
+            user_id=user_id,
+            username=username,
+        )
+
+    def parse_author_names(self, authors_text: str) -> list[str]:
+        authors = [name.strip() for name in authors_text.splitlines() if name.strip()]
+        if not authors:
+            raise ValueError("Enter at least one author name.")
+        return authors
 
     def submit_for_review(
         self,
@@ -15,15 +32,21 @@ class PublicationService:
         abstract: str,
         researcher_id: int,
         pdf_path: str,
+        authors: list[str],
         doi: str | None = None,
         keywords: list[str] | None = None,
         year: int | None = None,
     ) -> Publication:
+        normalized_authors = [author.strip() for author in authors if author.strip()]
+        if not normalized_authors:
+            raise ValueError("At least one author name is required.")
+
         return self.publication_repo.create_submission(
             title=title,
             abstract=abstract,
             researcher_id=researcher_id,
             pdf_path=pdf_path,
+            authors=normalized_authors,
             doi=doi,
             keywords=keywords,
             year=year,

@@ -20,6 +20,7 @@
       <div>
         <p class="publication-meta">SUBMISSION {{ "%04d"|format(paper.id) }} <span>UNDER REVIEW</span></p>
         <h2>{{ paper.title }}</h2>
+        <p><strong>Authors:</strong> {{ paper.authors|join(", ") }}</p>
         <p>{{ paper.abstract|truncate(220, True, "…") }}</p>
       </div>
       <a class="btn-landing btn-landing-ghost" href="{{ url_for('review_paper_view', pub_id=paper.id) }}">Review paper</a>

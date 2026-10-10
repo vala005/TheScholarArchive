@@ -21,6 +21,7 @@
       <article class="publication-row">
         <p class="publication-meta">ARCHIVE NO. {{ "%04d"|format(publication.id) }} <span>APPROVED</span></p>
         <h2>{{ publication.title }}</h2>
+        <p class="publication-authors"><strong>Authors:</strong> {{ publication.authors|join(", ") }}</p>
         <p class="publication-abstract">{{ publication.abstract|truncate(260, True, "…") }}</p>
         {% if user_logged_in %}
         <a class="publication-access" href="{{ url_for('publication_detail_view', pub_id=publication.id) }}">Read full paper <span aria-hidden="true">→</span></a>

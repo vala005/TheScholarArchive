@@ -1,13 +1,43 @@
 from typing import Optional
 
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
-from app.models.research import Citation, Publication, Researcher, SavedPublication
+from app.models.research import (
+    Admin,
+    Citation,
+    Publication,
+    Researcher,
+    Review,
+    SavedPublication,
+)
 
 
 class PublicationRepository:
     def __init__(self, db: Session):
         self.db = db
+
+    def get_or_create_researcher(
+        self,
+        *,
+        user_id: int,
+        username: str,
+    ) -> Researcher:
+        researcher = self.db.exec(
+            select(Researcher).where(Researcher.user_id == user_id)
+        ).one_or_none()
+        if researcher is None:
+            researcher = Researcher(
+                user_id=user_id,
+                first_name=username,
+                last_name="Researcher",
+                affiliation="Independent",
+                bio="Submitted through the archive upload workflow.",
+            )
+            self.db.add(researcher)
+            self.db.commit()
+            self.db.refresh(researcher)
+        return researcher
 
     def create_submission(
         self,
@@ -16,6 +46,7 @@ class PublicationRepository:
         abstract: str,
         researcher_id: int,
         pdf_path: str,
+        authors: list[str],
         doi: str | None = None,
         keywords: list[str] | None = None,
         year: int | None = None,
@@ -25,6 +56,7 @@ class PublicationRepository:
             abstract=abstract,
             status="under review",
             researcher_id=researcher_id,
+            authors=authors,
             doi=doi.strip() if doi and doi.strip() else None,
             keywords=keywords or [],
             year=year,
@@ -91,7 +123,13 @@ class PublicationRepository:
 
         # 3. Fetch all publications for this researcher, regardless of status
         publications = self.db.exec(
-            select(Publication).where(Publication.researcher_id == researcher.id)
+            select(Publication)
+            .where(Publication.researcher_id == researcher.id)
+            .options(
+                selectinload(Publication.reviews)
+                .selectinload(Review.reviewer)
+                .selectinload(Admin.user)
+            )
         ).all()
 
         return list(publications)

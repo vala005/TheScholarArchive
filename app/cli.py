@@ -153,6 +153,10 @@ def cmd_seed(args: argparse.Namespace) -> None:
                 ),
                 status="approved" if index < 20 else "under review",
                 researcher_id=researchers[index % len(researchers)].id,
+                authors=[
+                    f"{researchers[index % len(researchers)].first_name} "
+                    f"{researchers[index % len(researchers)].last_name}"
+                ],
                 doi=doi,
                 keywords=[subject, "scholarly research"],
                 year=2019 + index % 8,

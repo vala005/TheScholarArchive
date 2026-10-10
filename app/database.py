@@ -3,8 +3,9 @@ import threading
 import time
 from contextlib import contextmanager
 
+from sqlalchemy import inspect, text
 from sqlalchemy.exc import DBAPIError, OperationalError, ProgrammingError
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import SQLModel, Session, create_engine, select
 
 from app.config import get_settings
 
@@ -38,6 +39,39 @@ def create_db_and_tables() -> None:
     import app.models  # noqa: F401
 
     SQLModel.metadata.create_all(engine)
+    _migrate_publication_authors()
+
+
+def _migrate_publication_authors() -> None:
+    with engine.begin() as connection:
+        columns = {
+            column["name"]
+            for column in inspect(connection).get_columns("publication")
+        }
+        if "authors" in columns:
+            return
+        connection.execute(
+            text(
+                "ALTER TABLE publication "
+                "ADD COLUMN authors JSON NOT NULL DEFAULT '[]'"
+            )
+        )
+
+    from app.models.research import Publication, Researcher
+
+    with Session(engine) as session:
+        publications = session.exec(select(Publication)).all()
+        researchers = {
+            researcher.id: researcher
+            for researcher in session.exec(select(Researcher)).all()
+        }
+        for publication in publications:
+            researcher = researchers.get(publication.researcher_id)
+            if researcher is not None and not publication.authors:
+                author_name = f"{researcher.first_name} {researcher.last_name}".strip()
+                if author_name:
+                    publication.authors = [author_name]
+        session.commit()
 
 
 def drop_all() -> None:
