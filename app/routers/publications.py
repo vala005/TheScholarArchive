@@ -1,12 +1,13 @@
 from pathlib import Path
 
 from fastapi import HTTPException, Request, status
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
-from app.dependencies.auth import AuthDep, IsUserLoggedIn
+from app.dependencies.auth import AuthDep, OptionalAuthDep, ReaderDep
 from app.dependencies.session import SessionDep
 from app.repositories.publication import PublicationRepository
 from app.services.publication_service import PublicationService
+from app.utilities.flash import flash
 
 from . import router, templates
 
@@ -16,20 +17,27 @@ PDF_STORAGE_ROOT = Path("storage/pdfs").resolve()
 @router.get("/publications", response_class=HTMLResponse, name="publications_view")
 async def publications_view(
     request: Request,
-    user_logged_in: IsUserLoggedIn,
+    user: OptionalAuthDep,
     db: SessionDep,
     q: str | None = "",
 ):
     repository = PublicationRepository(db)
     service = PublicationService(repository)
     publications = service.search_approved(q or "")
+    saved_publication_ids = (
+        service.list_saved_publication_ids(user.id)
+        if user is not None and user.role == "regular_user"
+        else set()
+    )
     return templates.TemplateResponse(
         request=request,
         name="publications.html",
         context={
             "query": q,
             "publications": publications,
-            "user_logged_in": user_logged_in,
+            "user": user,
+            "user_logged_in": user is not None,
+            "saved_publication_ids": saved_publication_ids,
         },
     )
 
@@ -50,6 +58,7 @@ async def publication_detail_view(
 
     citations = service.list_citations(pub_id)
     references = service.list_references(pub_id)
+    is_saved = service.is_saved_publication(user.id, pub_id)
 
     return templates.TemplateResponse(
         request=request,
@@ -59,7 +68,35 @@ async def publication_detail_view(
             "citations": citations,
             "references": references,
             "user": user,
+            "is_saved": is_saved,
         },
+    )
+
+
+@router.post(
+    "/publications/{pub_id}/save",
+    name="toggle_saved_publication_action",
+)
+async def toggle_saved_publication_action(
+    pub_id: int,
+    request: Request,
+    user: ReaderDep,
+    db: SessionDep,
+):
+    # STUDENT SNIPPET: bind the user and paper to the service action, then
+    # redirect back to this paper's detail page.
+    repository = PublicationRepository(db)
+    service = PublicationService(repository)
+
+    is_saved = service.toggle_saved_publication(user.id, pub_id)
+    if is_saved:
+        flash(request, "Paper saved to your reading list.", "success")
+    else:
+        flash(request, "Paper removed from your reading list.", "success")
+
+    return RedirectResponse(
+        url=request.url_for("publication_detail_view", pub_id=pub_id),
+        status_code=status.HTTP_303_SEE_OTHER,
     )
 
 

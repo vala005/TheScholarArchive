@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block site_navigation %}{% endblock %}
+
 {% block internal_css %}
 <style>
     body {
@@ -80,13 +82,52 @@
         <div class="brand-wordmark">The Scholar's Archive</div>
 
         <ul class="nav nav-pills flex-column gap-2 flex-grow-1">
+            {% if user.role == "regular_user" %}
             <li class="nav-item">
-                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/app') }}"
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path == '/app' }}"
                    href="{{ url_for('user_home_view') }}">
-                    <span class="material-symbols-outlined me-2">home</span>
-                    Home
+                    <span class="material-symbols-outlined me-2">dashboard</span>
+                    Dashboard
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/publications') }}"
+                   href="{{ url_for('publications_view') }}">
+                    <span class="material-symbols-outlined me-2">menu_book</span>
+                    Publications
+                </a>
+            </li>
+            {% elif user.role == "researcher" %}
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path == '/app' }}"
+                   href="{{ url_for('user_home_view') }}">
+                    <span class="material-symbols-outlined me-2">dashboard</span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/publications') }}"
+                   href="{{ url_for('publications_view') }}">
+                    <span class="material-symbols-outlined me-2">menu_book</span>
+                    Publications
+                </a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/admin') }}"
+                   href="{{ url_for('admin_home_view') }}">
+                    <span class="material-symbols-outlined me-2">dashboard</span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/publications') }}"
+                   href="{{ url_for('publications_view') }}">
+                    <span class="material-symbols-outlined me-2">menu_book</span>
+                    Publications
+                </a>
+            </li>
+            {% endif %}
             <li class="nav-item mt-auto">
                 <a class="nav-link d-flex align-items-center text-danger" href="{{ url_for('logout') }}">
                     <span class="material-symbols-outlined me-2">logout</span>

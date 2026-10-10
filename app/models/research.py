@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import CheckConstraint, Column, JSON
+from sqlalchemy import CheckConstraint, Column, JSON, UniqueConstraint
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.user import User
@@ -48,6 +48,19 @@ class Citation(SQLModel, table=True):
     cited_pub_id: int = Field(foreign_key="publication.id", index=True)
 
 
+class SavedPublication(SQLModel, table=True):
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "publication_id",
+            name="uq_saved_publication_user_paper",
+        ),
+    )
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    publication_id: int = Field(foreign_key="publication.id", index=True)
+
+
 class Review(SQLModel, table=True):
     __table_args__ = (CheckConstraint("decision IN ('approve', 'reject')"),)
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -57,4 +70,3 @@ class Review(SQLModel, table=True):
     comments: str
     reviewer: Admin = Relationship(back_populates="reviews")
     publication: Publication = Relationship(back_populates="reviews")
-

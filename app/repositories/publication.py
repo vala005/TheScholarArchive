@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlmodel import Session, select
 
-from app.models.research import Citation, Publication, Researcher
+from app.models.research import Citation, Publication, Researcher, SavedPublication
 
 
 class PublicationRepository:
@@ -95,3 +95,49 @@ class PublicationRepository:
         ).all()
 
         return list(publications)
+
+    def toggle_saved_publication(self, user_id: int, publication_id: int) -> bool:
+        existing = self.db.exec(
+            select(SavedPublication).where(
+                SavedPublication.user_id == user_id,
+                SavedPublication.publication_id == publication_id,
+            )
+        ).one_or_none()
+        if existing is not None:
+            self.db.delete(existing)
+            self.db.commit()
+            return False
+        self.db.add(
+            SavedPublication(user_id=user_id, publication_id=publication_id)
+        )
+        self.db.commit()
+        return True
+
+    def is_saved_publication(self, user_id: int, publication_id: int) -> bool:
+        saved_id = self.db.exec(
+            select(SavedPublication.id).where(
+                SavedPublication.user_id == user_id,
+                SavedPublication.publication_id == publication_id,
+            )
+        ).first()
+        return saved_id is not None
+
+    def list_saved_publications(self, user_id: int) -> list[Publication]:
+        return self.db.exec(
+            select(Publication)
+            .join(SavedPublication, SavedPublication.publication_id == Publication.id)
+            .where(
+                SavedPublication.user_id == user_id,
+                Publication.status == "approved",
+            )
+            .order_by(Publication.title)
+        ).all()
+
+    def list_saved_publication_ids(self, user_id: int) -> set[int]:
+        return set(
+            self.db.exec(
+                select(SavedPublication.publication_id).where(
+                    SavedPublication.user_id == user_id,
+                )
+            ).all()
+        )

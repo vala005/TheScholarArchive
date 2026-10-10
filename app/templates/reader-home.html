@@ -1,0 +1,66 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Reader Home | The Scholar's Archive{% endblock %}
+
+{% block subpage_content %}
+<main class="reader-dashboard">
+  <header class="reader-welcome">
+    <div class="reader-welcome-copy">
+      <p class="archive-eyebrow">THE SCHOLAR'S ARCHIVE <span>/</span> READING ROOM</p>
+      <h1>A quieter place to discover <em>big ideas.</em></h1>
+      <p>Welcome, {{ user.name or user.username }}. Explore original research, thoughtful reviews, and the citations that connect them.</p>
+    </div>
+    <form class="reader-search" method="get" action="{{ url_for('publications_view') }}" role="search">
+      <label for="reader-query">Begin with a topic, title, or idea</label>
+      <div class="reader-search-controls">
+        <input id="reader-query" name="q" type="search" placeholder="e.g. climate resilience">
+        <button class="btn-landing btn-landing-primary" type="submit">Search the archive <span aria-hidden="true">→</span></button>
+      </div>
+      <a class="reader-browse-link" href="{{ url_for('publications_view') }}">Browse all approved papers</a>
+    </form>
+  </header>
+
+  <section class="reader-guidance" aria-labelledby="reader-guidance-title">
+    <div>
+      <p class="archive-eyebrow">FROM THE ARCHIVE</p>
+      <h2 id="reader-guidance-title">Research worth spending time with.</h2>
+    </div>
+    <p>Start with a question that interests you. Browse approved papers, read the full work, and follow its references to discover what comes next.</p>
+  </section>
+
+  <section class="reader-saved-papers" aria-labelledby="saved-papers-title">
+    <header class="reader-section-heading">
+      <div>
+        <p class="archive-eyebrow">YOUR LIBRARY</p>
+        <h2 id="saved-papers-title">Saved papers</h2>
+      </div>
+      <span class="reader-count">{{ saved_papers|length }}</span>
+    </header>
+    {% if saved_papers %}
+    <div class="reader-saved-list">
+      {% for paper in saved_papers %}
+      <article class="reader-saved-item">
+        <div>
+          <p class="publication-meta">ARCHIVE NO. {{ "%04d"|format(paper.id) }} <span>APPROVED</span></p>
+          <h3>{{ paper.title }}</h3>
+          <p>{{ paper.abstract|truncate(180, True, "…") }}</p>
+        </div>
+        <a class="publication-access" href="{{ url_for('publication_detail_view', pub_id=paper.id) }}">Read paper <span aria-hidden="true">→</span></a>
+        <form class="save-publication-form" method="post" action="{{ url_for('toggle_saved_publication_action', pub_id=paper.id) }}">
+          <button class="btn-landing btn-landing-ghost" type="submit">Remove from saved papers</button>
+        </form>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="reader-empty">
+      <span class="material-symbols-outlined" aria-hidden="true">bookmark_add</span>
+      <div>
+        <h3>Your library is ready for its first paper.</h3>
+        <p>Save an approved paper while browsing the archive, and it will be waiting here.</p>
+        <a class="publication-access" href="{{ url_for('publications_view') }}">Explore publications <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

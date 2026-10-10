@@ -17,13 +17,34 @@
     <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,100,1,200"
         rel="stylesheet" />
-    <link href="{{ url_for('static', path='css/app.css')}}?v=2" rel="stylesheet">
+    <link href="{{ url_for('static', path='css/app.css')}}?v=5" rel="stylesheet">
 
     {% block external_css %}{% endblock %}
     {% block internal_css %}{% endblock %}
 </head>
 
 <body>
+    {% block site_navigation %}
+    <header class="site-navigation">
+        <a class="brand-wordmark" href="{{ url_for('index_view') }}">The Scholar's Archive</a>
+        <nav class="site-navigation-links" aria-label="Main navigation">
+            <a class="{{ 'is-active' if request.url.path == '/' else '' }}" href="{{ url_for('index_view') }}">Home</a>
+            <a class="{{ 'is-active' if request.url.path.startswith('/publications') else '' }}" href="{{ url_for('publications_view') }}">Publications</a>
+            {% if (user is defined and user) or user_logged_in|default(false) %}
+            <a href="{% if app_home is defined %}{{ app_home }}{% elif user is defined and user.role == 'admin' %}{{ url_for('admin_home_view') }}{% else %}{{ url_for('user_home_view') }}{% endif %}">Dashboard</a>
+            {% endif %}
+        </nav>
+        <nav class="site-navigation-account" aria-label="Account">
+            {% if (user is defined and user) or user_logged_in|default(false) %}
+            <a class="btn-landing btn-landing-ghost" href="{{ url_for('logout') }}">Sign out</a>
+            {% else %}
+            <a class="btn-landing btn-landing-ghost" href="{{ url_for('login_view') }}">Sign in</a>
+            <a class="btn-landing btn-landing-primary" href="{{ url_for('register_view') }}">Create an account</a>
+            {% endif %}
+        </nav>
+    </header>
+    {% endblock %}
+
     {% block content %}{% endblock %}
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">

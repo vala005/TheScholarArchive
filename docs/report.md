@@ -46,6 +46,8 @@ erDiagram
   Publication ||--o{ Review : receives
   Publication ||--o{ Citation : cites
   Publication ||--o{ Citation : cited_by
+  User ||--o{ SavedPublication : saves
+  Publication ||--o{ SavedPublication : bookmarked_as
 
   User {
     int userId PK
@@ -87,6 +89,12 @@ erDiagram
     int citationId PK
     int citingPublicationId FK
     int citedPublicationId FK
+  }
+
+  SavedPublication {
+    int savedPublicationId PK
+    int userId FK
+    int publicationId FK
   }
 
   Review {
@@ -133,6 +141,10 @@ The wireframes show the public browse flow, researcher upload flow, and admin re
 
 ![COMP3613(1)](wireframes/COMP3613(1).png)
 
+### Reader dashboard
+
+![Reader dashboard wireframe](wireframes/reader-dashboard.png)
+
 ## Theming
 
 The Scholar's Archive: dark-academia-inspired, intellectual and archival, with a clean modern interface. Ink black `#100D0C` and espresso `#1C1513` form the foundation; deep maroon `#641F2A` and burgundy `#8A3040` provide accents; antique gold `#C9A96E`, aged ivory `#E8DFD1`, and muted taupe `#A99B8D` provide detail and text. Cormorant Garamond is used for display typography and Inter for body/navigation. A library image, restrained gold borders, and rectangular controls carry the visual direction across landing, login, registration, and the authenticated shell.
@@ -142,6 +154,76 @@ The Scholar's Archive: dark-academia-inspired, intellectual and archival, with a
 One named workflow at a time. Include verify notes and polish / model revisions (Phase 5). Do not treat the first build as final. Phase 5 model alignment: `userId` maps to the starter `User.id`, `researcherId`/`adminId`/`pubId`/`reviewId` map to each SQLModel `id`, Researcher uses `first_name`, `last_name`, `affiliation`, and `bio`, review attributes live only on `Review`, Admin accounts act as Publishers, and citations link one Publication to another. Author, Citation, and AuthoredPublication repository imports from an earlier draft were not carried over as separate entities; Citation is the publication-to-publication link table.
 
 Polish verification: locally confirmed that the paper submission form is available to researcher accounts only; non-researcher accounts do not see it.
+
+Dashboard polish: regular users now receive an editorial reading-room dashboard with library imagery and prominent title/abstract search, while researcher accounts retain the submissions dashboard and upload form. Local verification of the revised styling is pending.
+
+Reader dashboard wireframe decisions: implement Dashboard and Publications first; Feed, Updates, and Settings are deferred. Readers want independent saved-paper, saved-citation, saved-reference, and saved-author lists, populated by Save/Remove controls beside items. Saved citations are papers in a paper's “Cited by” section; saved references are papers in its “References” section; saved authors are Researcher profiles. Weekly screen time counts only while a paper tab is visible, and favorite author is based on paper opens. The first implementation slice is saving a publication.
+
+Saved Publication implementation: the `SavedPublication` entity has user/publication foreign keys and a unique pair constraint. Reader accounts can save or remove approved papers from the catalogue, detail page, and saved-paper list; the dashboard lists saved papers. The save action is restricted to reader accounts. Saved citations, references, authors, and weekly activity remain deferred. Local verification of this slice is pending.
+
+Navigation polish: a shared public-site menu now links Home and Publications everywhere, and shows the signed-in user's Dashboard and account action when available. Authenticated dashboards retain their sidebar and now link to Publications for each role. The student verified that the menu works across pages.
+
+Appearance polish: kept the dark-academia palette and strengthened visual hierarchy with a wider split reading-room hero, layered surfaces, publication and saved-paper cards, clearer metadata badges, refined paper-detail sections, responsive spacing, and visible keyboard focus states. The student confirmed the updated appearance feels better.
+
+<!-- student-build:code-check
+workflow: Save Publication (User)
+form: choice
+layer: other
+architecture_ok: yes
+implement_confidence: 0.45
+passed: yes
+note: Selected separate tables for the four independent saved collections.
+-->
+
+<!-- student-build:code-check
+workflow: Save Publication (User)
+form: mcq
+layer: repository
+architecture_ok: no
+implement_confidence: 0.45
+passed: no
+note: Chose repository for coordinating whether to insert or remove a saved item; service should coordinate the application action.
+-->
+
+<!-- student-build:code-check
+workflow: Save Publication (User)
+form: snippet
+layer: model
+architecture_ok: yes
+implement_confidence: 0.35
+passed: yes
+note: Added SavedPublication user/publication foreign keys and uniqueness constraint after scaffold guidance.
+-->
+
+<!-- student-build:code-check
+workflow: Save Publication (User)
+form: snippet
+layer: repository
+architecture_ok: no
+implement_confidence: 0.25
+passed: partial
+note: Persistence toggle was attempted, but the first edit misplaced route code and duplicated the repository class; final structure was corrected.
+-->
+
+<!-- student-build:code-check
+workflow: Save Publication (User)
+form: snippet
+layer: service
+architecture_ok: yes
+implement_confidence: 0.25
+passed: partial
+note: Service delegated through the publication repository, but an incorrect repository attribute needed correction.
+-->
+
+<!-- student-build:code-check
+workflow: Save Publication (User)
+form: snippet
+layer: router
+architecture_ok: yes
+implement_confidence: 0.3
+passed: yes
+note: Thin POST handler binds the authenticated reader and publication, calls PublicationService, and redirects to the detail page.
+-->
 
 ## Deployed app
 

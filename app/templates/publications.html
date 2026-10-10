@@ -3,18 +3,6 @@
 
 {% block content %}
 <div class="archive-page">
-  <header class="archive-nav">
-    <a class="brand-wordmark" href="{{ url_for('index_view') }}">The Scholar's Archive</a>
-    <nav class="archive-nav-actions" aria-label="Account">
-      {% if user_logged_in %}
-      <a class="btn-landing btn-landing-ghost" href="{{ url_for('logout') }}">Sign out</a>
-      {% else %}
-      <a class="btn-landing btn-landing-ghost" href="{{ url_for('login_view') }}">Sign in</a>
-      <a class="btn-landing btn-landing-primary" href="{{ url_for('register_view') }}">Create an account</a>
-      {% endif %}
-    </nav>
-  </header>
-
   <main class="archive-main">
     <p class="landing-kicker">The catalogue</p>
     <h1 class="archive-title">Browse Publications</h1>
@@ -36,6 +24,13 @@
         <p class="publication-abstract">{{ publication.abstract|truncate(260, True, "…") }}</p>
         {% if user_logged_in %}
         <a class="publication-access" href="{{ url_for('publication_detail_view', pub_id=publication.id) }}">Read full paper <span aria-hidden="true">→</span></a>
+        {% if user and user.role == "regular_user" %}
+        <form class="save-publication-form" method="post" action="{{ url_for('toggle_saved_publication_action', pub_id=publication.id) }}">
+          <button class="btn-landing btn-landing-ghost" type="submit">
+            {{ "Remove from saved papers" if publication.id in saved_publication_ids else "Save paper" }}
+          </button>
+        </form>
+        {% endif %}
         {% else %}
         <a class="publication-access" href="{{ url_for('login_view') }}">Sign in to access full paper <span aria-hidden="true">→</span></a>
         {% endif %}

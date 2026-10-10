@@ -22,6 +22,18 @@ async def user_home_view(
 ):
     repo = PublicationRepository(db)
     service = PublicationService(repo)
+
+    if user.role != "researcher":
+        saved_papers = service.list_saved_publications(user.id)
+        return templates.TemplateResponse(
+            request=request,
+            name="reader-home.html",
+            context={
+                "user": user,
+                "saved_papers": saved_papers,
+            },
+        )
+
     papers = service.list_for_researcher(user.id)
 
     return templates.TemplateResponse(

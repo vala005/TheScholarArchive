@@ -48,3 +48,18 @@ class PublicationService:
     def list_for_researcher(self, user_id: int) -> list[Publication]:
         # Delegate the researcher submissions retrieval to the repository
         return self.publication_repo.list_for_researcher(user_id)
+
+    def toggle_saved_publication(self, user_id: int, publication_id: int) -> bool:
+        if self.publication_repo.get_approved(publication_id) is None:
+            return False
+
+        return self.publication_repo.toggle_saved_publication(user_id, publication_id)
+
+    def is_saved_publication(self, user_id: int, publication_id: int) -> bool:
+        return self.publication_repo.is_saved_publication(user_id, publication_id)
+
+    def list_saved_publications(self, user_id: int) -> list[Publication]:
+        return self.publication_repo.list_saved_publications(user_id)
+
+    def list_saved_publication_ids(self, user_id: int) -> set[int]:
+        return self.publication_repo.list_saved_publication_ids(user_id)

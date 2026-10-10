@@ -31,6 +31,14 @@ async def get_current_user(request:Request, db:SessionDep)->User:
         raise credentials_exception
     return user
 
+async def get_optional_current_user(request: Request, db: SessionDep) -> User | None:
+    try:
+        return await get_current_user(request, db)
+    except HTTPException as exc:
+        if exc.status_code == status.HTTP_401_UNAUTHORIZED:
+            return None
+        raise
+
 async def is_logged_in(request: Request, db:SessionDep):
     try:
         await get_current_user(request, db)
@@ -40,6 +48,8 @@ async def is_logged_in(request: Request, db:SessionDep):
 
 IsUserLoggedIn = Annotated[bool, Depends(is_logged_in)]
 AuthDep = Annotated[User, Depends(get_current_user)]
+
+OptionalAuthDep = Annotated[User | None, Depends(get_optional_current_user)]
 
 async def is_admin(user: User):
     return user.role == "admin"
@@ -53,3 +63,13 @@ async def is_admin_dep(user: AuthDep):
     return user
 
 AdminDep = Annotated[User, Depends(is_admin_dep)]
+
+async def is_reader_dep(user: AuthDep):
+    if user.role != "regular_user":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only reader accounts can save publications.",
+        )
+    return user
+
+ReaderDep = Annotated[User, Depends(is_reader_dep)]
