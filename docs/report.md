@@ -147,7 +147,7 @@ The wireframes show the public browse flow, researcher upload flow, and admin re
 
 ## Theming
 
-The Scholar's Archive: dark-academia-inspired, intellectual and archival, with a clean modern interface. Ink black `#100D0C` and espresso `#1C1513` form the foundation; deep maroon `#641F2A` and burgundy `#8A3040` provide accents; antique gold `#C9A96E`, aged ivory `#E8DFD1`, and muted taupe `#A99B8D` provide detail and text. Cormorant Garamond is used for display typography and Inter for body/navigation. A library image, restrained gold borders, and rectangular controls carry the visual direction across landing, login, registration, and the authenticated shell.
+The Scholar's Archive: editorial and archival. The current uncommitted visual preview follows the alternate reference's dramatic estate mood: charcoal `#100B10`, wine-black `#1B1118`, oxblood `#720D20`, ivory `#F0E7DF`, and antique brass `#C4A06C`. Cormorant Garamond remains the display typeface and Inter remains the body/navigation typeface. The existing library image is retained and framed with deeper crimson overlays; catalogue, paper detail, reader, and editorial surfaces use layered charcoal and wine tones. Student approval of this preview is pending.
 
 ## Implementation notes
 
@@ -164,6 +164,8 @@ Saved Publication implementation: the `SavedPublication` entity has user/publica
 Navigation polish: a shared public-site menu now links Home and Publications everywhere, and shows the signed-in user's Dashboard and account action when available. Authenticated dashboards retain their sidebar and now link to Publications for each role. The student verified that the menu works across pages.
 
 Appearance polish: kept the dark-academia palette and strengthened visual hierarchy with a wider split reading-room hero, layered surfaces, publication and saved-paper cards, clearer metadata badges, refined paper-detail sections, responsive spacing, and visible keyboard focus states. The student confirmed the updated appearance feels better.
+
+Whole-site visual polish: following the student's estate-style reference, the landing page now has a photographic editorial hero, CSS-drawn archive cover, manifesto, three archive workflow panels, and a collection call-to-action. Sign-in and registration use a matching split editorial layout; catalogue, paper detail, and authenticated screens share the same crimson/charcoal/ivory/brass finish. The student verified that the site feels cohesive and eye-catching. Changes remain uncommitted.
 
 <!-- student-build:code-check
 workflow: Save Publication (User)

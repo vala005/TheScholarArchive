@@ -3,10 +3,19 @@
 
 {% block content %}
 <div class="auth-shell">
+  <aside class="auth-story">
+    <p class="landing-kicker"><span></span> THE SCHOLAR'S ARCHIVE</p>
+    <h1>Good research is a conversation <em>across time.</em></h1>
+    <p>Return to the papers, references, and ideas you have been exploring.</p>
+    <div class="auth-story-mark" aria-hidden="true">
+      <span class="material-symbols-outlined">auto_stories</span>
+      <span>READ DEEPLY<br>FOLLOW THE THREAD</span>
+    </div>
+  </aside>
   <div class="auth-panel">
     <a class="auth-back" href="{{ url_for('index_view') }}">← Home</a>
-    <div class="brand-wordmark">The Scholar's Archive</div>
-    <p class="auth-tagline">Return to the archive</p>
+    <div class="brand-wordmark">Welcome back.</div>
+    <p class="auth-tagline">Sign in to continue your research journey.</p>
 
     <form method="POST" action="{{ url_for('login_action_ajax') }}">
       <div class="mb-3">

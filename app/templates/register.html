@@ -3,10 +3,19 @@
 
 {% block content %}
 <div class="auth-shell">
+  <aside class="auth-story">
+    <p class="landing-kicker"><span></span> THE SCHOLAR'S ARCHIVE</p>
+    <h1>Make room for ideas that <em>stay with you.</em></h1>
+    <p>Create your place in the reading room: discover published research, follow citations, and keep papers close.</p>
+    <div class="auth-story-mark" aria-hidden="true">
+      <span class="material-symbols-outlined">auto_stories</span>
+      <span>READ DEEPLY<br>FOLLOW THE THREAD</span>
+    </div>
+  </aside>
   <div class="auth-panel">
     <a class="auth-back" href="{{ url_for('index_view') }}">← Home</a>
-    <div class="brand-wordmark">The Scholar's Archive</div>
-    <p class="auth-tagline">Create your archive account</p>
+    <div class="brand-wordmark">Join the archive.</div>
+    <p class="auth-tagline">A reading room for research and discovery.</p>
 
     <form method="POST" action="{{ url_for('register_view') }}">
       <div class="mb-3">

@@ -3,30 +3,97 @@
 
 {% block content %}
 <div class="landing">
-  <main class="landing-hero">
-    <p class="landing-kicker">A research platform</p>
-    <h1 class="brand-wordmark">The Scholar's Archive</h1>
-    <p class="landing-lead">
-      A reading room for original research, thoughtful review, and ideas that endure.
-    </p>
-    <form class="landing-search" method="get" action="{{ url_for('publications_view') }}" role="search">
-      <label class="visually-hidden" for="archive-query">Search approved research</label>
-      <input id="archive-query" name="q" type="search" placeholder="Search research, titles, or abstracts">
-      <button class="btn-landing btn-landing-primary" type="submit">Search</button>
-    </form>
-    <div class="landing-cta">
-      <a class="btn-landing btn-landing-ghost" href="{{ url_for('publications_view') }}">Browse publications</a>
-      {% if user_logged_in %}
-      <a class="btn-landing btn-landing-primary" href="{{ app_home }}">Continue to app</a>
-      {% else %}
-      <a class="btn-landing btn-landing-primary" href="{{ url_for('register_view') }}">Create an account</a>
-      <a class="btn-landing btn-landing-ghost" href="{{ url_for('login_view') }}">Sign in</a>
-      {% endif %}
-    </div>
+  <main>
+    <section class="landing-hero" aria-labelledby="landing-title">
+      <div class="landing-hero-copy">
+        <p class="landing-kicker"><span></span> A living research archive</p>
+        <h1 class="brand-wordmark" id="landing-title">Research leaves a trail. <em>Follow it.</em></h1>
+        <p class="landing-lead">
+          Discover original work, read it in context, and follow the references that connect one idea to another.
+        </p>
+        <form class="landing-search" method="get" action="{{ url_for('publications_view') }}" role="search">
+          <label class="visually-hidden" for="archive-query">Search approved research</label>
+          <span class="material-symbols-outlined" aria-hidden="true">search</span>
+          <input id="archive-query" name="q" type="search" placeholder="Search titles, abstracts, or ideas">
+          <button class="btn-landing btn-landing-primary" type="submit">Explore <span aria-hidden="true">→</span></button>
+        </form>
+        <div class="landing-cta">
+          <a class="landing-text-link" href="{{ url_for('publications_view') }}">Browse the collection <span aria-hidden="true">↗</span></a>
+          {% if user_logged_in %}
+          <a class="landing-text-link" href="{{ app_home }}">Return to your desk <span aria-hidden="true">↗</span></a>
+          {% else %}
+          <a class="landing-text-link" href="{{ url_for('register_view') }}">Join the archive <span aria-hidden="true">↗</span></a>
+          {% endif %}
+        </div>
+      </div>
+
+      <aside class="landing-hero-art" aria-label="The archive connects discovery, reading, and references">
+        <div class="archive-cover-stack" aria-hidden="true">
+          <div class="archive-cover archive-cover-back"></div>
+          <div class="archive-cover archive-cover-front">
+            <span class="archive-cover-mark">S<span>A</span></span>
+            <span class="archive-cover-rule"></span>
+            <span class="archive-cover-caption">THE SCHOLAR'S<br>ARCHIVE</span>
+            <span class="archive-cover-index">EST. MMXXIV&nbsp; / &nbsp;VOL. 01</span>
+          </div>
+        </div>
+        <div class="archive-orbit archive-orbit-one" aria-hidden="true"></div>
+        <div class="archive-orbit archive-orbit-two" aria-hidden="true"></div>
+        <p class="landing-art-caption"><span>01 — 03</span> Ideas are better connected.</p>
+      </aside>
+      <div class="landing-scroll-cue" aria-hidden="true"><span></span> Scroll to explore</div>
+    </section>
+
+    <section class="landing-manifesto" aria-labelledby="manifesto-title">
+      <div class="landing-section-index">THE ARCHIVE / 01</div>
+      <div class="landing-manifesto-copy">
+        <p class="landing-kicker">Beyond the abstract</p>
+        <h2 id="manifesto-title">Every paper is part of a <em>bigger story.</em></h2>
+      </div>
+      <p class="landing-manifesto-note">Move from a question to a paper, then outward through the references and citations that shaped it. A research archive should make those connections easier to see.</p>
+    </section>
+
+    <section class="landing-journey" aria-label="Explore the archive">
+      <article class="journey-card journey-card-discover">
+        <span class="journey-number">01</span>
+        <span class="material-symbols-outlined journey-icon" aria-hidden="true">manage_search</span>
+        <p class="landing-kicker">Begin anywhere</p>
+        <h2>Find a question worth asking.</h2>
+        <p>Search approved publications by title or abstract and see where your curiosity leads.</p>
+        <a href="{{ url_for('publications_view') }}">Search the archive <span aria-hidden="true">→</span></a>
+      </article>
+      <article class="journey-card journey-card-read">
+        <span class="journey-number">02</span>
+        <span class="material-symbols-outlined journey-icon" aria-hidden="true">menu_book</span>
+        <p class="landing-kicker">Take your time</p>
+        <h2>Read the work in full.</h2>
+        <p>Open a publication and spend time with the complete paper, not just its summary.</p>
+        <a href="{{ url_for('publications_view') }}">Enter the reading room <span aria-hidden="true">→</span></a>
+      </article>
+      <article class="journey-card journey-card-follow">
+        <span class="journey-number">03</span>
+        <span class="material-symbols-outlined journey-icon" aria-hidden="true">account_tree</span>
+        <p class="landing-kicker">Follow the thread</p>
+        <h2>See what the research cites.</h2>
+        <p>Explore references and citing papers to understand how ideas build on one another.</p>
+        <a href="{{ url_for('publications_view') }}">Trace the connections <span aria-hidden="true">→</span></a>
+      </article>
+    </section>
+
+    <section class="landing-invitation">
+      <div>
+        <p class="landing-kicker">A collection in conversation</p>
+        <h2>Start with one paper.<br><em>See where it takes you.</em></h2>
+      </div>
+      <a class="btn-landing btn-landing-primary" href="{{ url_for('publications_view') }}">Browse publications <span aria-hidden="true">→</span></a>
+      <span class="invitation-ornament" aria-hidden="true">S·A</span>
+    </section>
   </main>
 
   <footer class="landing-foot">
-    Knowledge, preserved. Ideas, connected.
+    <a class="brand-wordmark" href="{{ url_for('index_view') }}">The Scholar's Archive</a>
+    <span>Knowledge, preserved. Ideas, connected.</span>
+    <a href="{{ url_for('publications_view') }}">Explore the collection <span aria-hidden="true">↗</span></a>
   </footer>
 </div>
 {% endblock %}
