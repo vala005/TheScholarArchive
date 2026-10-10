@@ -46,6 +46,12 @@ async def submit_publication_action(
     year: int | None = Form(default=None),
     file: UploadFile = File(...),
 ):
+    if user.role != "researcher":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only researcher accounts can submit papers.",
+        )
+
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         flash(request, "Please upload a PDF file for review.", "danger")
         return RedirectResponse(url="/app", status_code=status.HTTP_303_SEE_OTHER)

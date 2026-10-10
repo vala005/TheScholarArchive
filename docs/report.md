@@ -141,6 +141,8 @@ The Scholar's Archive: dark-academia-inspired, intellectual and archival, with a
 
 One named workflow at a time. Include verify notes and polish / model revisions (Phase 5). Do not treat the first build as final. Phase 5 model alignment: `userId` maps to the starter `User.id`, `researcherId`/`adminId`/`pubId`/`reviewId` map to each SQLModel `id`, Researcher uses `first_name`, `last_name`, `affiliation`, and `bio`, review attributes live only on `Review`, Admin accounts act as Publishers, and citations link one Publication to another. Author, Citation, and AuthoredPublication repository imports from an earlier draft were not carried over as separate entities; Citation is the publication-to-publication link table.
 
+Polish verification: locally confirmed that the paper submission form is available to researcher accounts only; non-researcher accounts do not see it.
+
 ## Deployed app
 
 Phase 6. Deployed to Render. The public landing page loads and `GET /health` returns `{"ok":true}`.
